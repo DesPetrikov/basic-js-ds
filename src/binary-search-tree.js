@@ -59,26 +59,49 @@ module.exports = class BinarySearchTree {
     
   }
 
-  find(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
-
-
+  find(data) {
+    return searchFunction(this.base, data)
+    function searchFunction (node, data){
+      if(node === null){
+        return null;
+      }
+      else if (node.data === data){
+        return node
+      }
+      else if (data < node.data){
+        return searchFunction (node.left, data)
+      }
+      else if (data > node.data){
+        return searchFunction (node.right, data)
+      }
+    }
   }
 
-  remove(/* data */) {
+  remove(/*data*/) {
     throw new NotImplementedError('Not implemented');
     // remove line with error and write your code here
+
   }
 
   min() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+   return searchFunction(this.base)
+   function searchFunction(node){
+    if(node.left === null){
+      return node.data;
+    }else{
+      return searchFunction(node.left)
+    }
+   }
   }
 
   max() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+   return searchFunction(this.base);
+   function searchFunction(node){
+     if (node.right === null){
+       return node.data
+     }else{
+       return searchFunction(node.right)
+     }
+   }
   }
-
 }
