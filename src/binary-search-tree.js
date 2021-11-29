@@ -3,105 +3,127 @@ const { NotImplementedError } = require('../extensions/index.js');
 const { Node } = require('../extensions/list-tree.js');
 
 /**
-* Implement simple binary search tree according to task description
-* using Node from extensions
-*/
+ * Implement simple binary search tree according to task description
+ * using Node from extensions
+ */
 module.exports = class BinarySearchTree {
-  constructor(){
+  constructor() {
     this.base = null;
   }
 
   root() {
-   return this.base;
+    return this.base;
   }
 
   add(data) {
-    const newNode = new Node(data)
-    if(!this.base){
+    let newNode = new Node(data);
+    if (!this.base) {
       this.base = newNode;
-      return;
+    } else {
+      insertNode(this.base, newNode);
     }
-    let currentNode = this.base;
-    while(currentNode){
-      if(newNode.data < currentNode.data){
-        if(!currentNode.left){
-          currentNode.left = newNode;
-          return
+    function insertNode(node, newNode) {
+      if (newNode.data < node.data) {
+        if (!node.left) {
+          node.left = newNode;
+        } else {
+          insertNode(node.left, newNode);
         }
-        currentNode = currentNode.left
-      }
-      else{
-        if(!currentNode.right){
-          currentNode.right = newNode;
-          return
+      } else {
+        if (!node.right) {
+          node.right = newNode;
+        } else {
+          insertNode(node.right, newNode);
         }
-        currentNode = currentNode.right
       }
     }
   }
 
   has(data) {
-    return searchFunction(this.base, data)
-    function searchFunction(node, data){
-      if(!node){
+    return hasNode(this.base, data);
+
+    function hasNode(node, data) {
+      if (!node) {
         return false;
       }
-      else if (node.data === data){
+      if (node.data === data) {
         return true;
       }
-      else if (data < node.data){
-        return searchFunction(node.left, data)
-      }
-      else{
-        return searchFunction(node.right, data)
-      }
+      return data < node.data
+        ? hasNode(node.left, data)
+        : hasNode(node.right, data);
     }
-    
   }
 
   find(data) {
-    return searchFunction(this.base, data)
-    function searchFunction (node, data){
-      if(node === null){
+    return findNode(this.base, data);
+    function findNode(node, data) {
+      if (!node) {
         return null;
-      }
-      else if (node.data === data){
-        return node
-      }
-      else if (data < node.data){
-        return searchFunction (node.left, data)
-      }
-      else if (data > node.data){
-        return searchFunction (node.right, data)
+      } else if (data < node.data) {
+        return findNode(node.left, data);
+      } else if (data > node.data) {
+        return findNode(node.right, data);
+      } else {
+        return node;
       }
     }
   }
 
-  remove(/*data*/) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  remove(data) {
+    this.base = removeNode(this.base, data);
 
+    function removeNode(node, data) {
+      if (!node) {
+        return null;
+      } else if (data < node.data) {
+        node.left = removeNode(node.left, data);
+        return node;
+      } else if (data > node.data) {
+        node.right = removeNode(node.right, data);
+        return node;
+      } else {
+        if (!node.left && !node.right) {
+          node = null;
+          return node;
+        }
+        if (!node.left) {
+          node = node.right;
+          return node;
+        } else if (!node.right) {
+          node = node.left;
+          return node;
+        }
+        let minFromRight = node.right;
+        while (minFromRight.left) {
+          minFromRight = minFromRight.left;
+        }
+        node.data = minFromRight.data;
+        node.right = removeNode(node.right, minFromRight.data);
+        return node;
+      }
+    }
   }
 
   min() {
-   return searchFunction(this.base)
-   function searchFunction(node){
-    if(node.left === null){
-      return node.data;
-    }else{
-      return searchFunction(node.left)
+    return minNode(this.base);
+    function minNode(node) {
+      if (!node.left) {
+        return node.data;
+      } else {
+        return minNode(node.left);
+      }
     }
-   }
   }
 
   max() {
-   return searchFunction(this.base);
-   function searchFunction(node){
-     if (node.right === null){
-       return node.data
-     }else{
-       return searchFunction(node.right)
-     }
-   }
+    return maxNode(this.base);
+    function maxNode(node) {
+      if (!node.right) {
+        return node.data;
+      } else {
+        return maxNode(node.right);
+      }
+    }
   }
-}
+};

@@ -37,10 +37,9 @@ module.exports = class Queue {
   }
 
   dequeue() {
-    const node = this.head.value;
+    const value = this.head.value;
     this.head = this.head.next;
-    return node;
+    return value;
     
   }
-
 }
